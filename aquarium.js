@@ -84,6 +84,14 @@ class Aquarium {
         this.init();
         
         window.addEventListener('resize', () => this.resize());
+        
+        // Add click event listener
+        this.canvas.addEventListener('click', (e) => this.handleClick(e));
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            this.handleClick(touch);
+        });
         this.animate();
     }
 
@@ -112,6 +120,20 @@ class Aquarium {
         // Create crabs
         for (let i = 0; i < 2; i++) {
             this.crabs.push(new Crab(this.canvas));
+        }
+    }
+
+    handleClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Create a cluster of bubbles
+        const bubbleCount = 3 + Math.floor(Math.random() * 4); // 3-6 bubbles
+        for (let i = 0; i < bubbleCount; i++) {
+            const offsetX = (Math.random() - 0.5) * 20; // Spread bubbles horizontally
+            const bubble = new Bubble(this.canvas, x + offsetX, y);
+            this.bubbles.push(bubble);
         }
     }
 
@@ -218,10 +240,10 @@ class Fish {
 }
 
 class Bubble {
-    constructor(canvas) {
+    constructor(canvas, x, y) {
         this.canvas = canvas;
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20;
+        this.x = x || Math.random() * canvas.width;
+        this.y = y || canvas.height + 20;
         this.size = 2 + Math.random() * 8;
         this.speed = 1 + Math.random() * 2;
         this.wobble = 0;
