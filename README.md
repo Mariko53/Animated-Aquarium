@@ -22,3 +22,15 @@ To enable background music:
 3. The music will be available to play via the control panel in the top-right corner
 
 Note: Due to browser security policies, audio will only play after user interaction (clicking the play button).
+
+## How to Update
+
+1. Make your changes to the files
+2. Test locally using: `python3 -m http.server 8000`
+3. Commit and push to GitHub:
+   ```bash
+   git add .
+   git commit -m "Your change description"
+   git push
+   ```
+4. The site will automatically redeploy with your changes
