@@ -313,4 +313,37 @@ class Seaweed {
 }
 
 // Start the aquarium when the page loads
-window.onload = () => new Aquarium();
+class AudioController {
+    constructor() {
+        this.music = document.getElementById('bg-music');
+        this.toggleButton = document.getElementById('toggle-music');
+        this.volumeSlider = document.getElementById('volume-slider');
+        this.isPlaying = false;
+
+        this.toggleButton.addEventListener('click', () => this.toggleMusic());
+        this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+        
+        // Set initial volume
+        this.setVolume(this.volumeSlider.value);
+    }
+
+    toggleMusic() {
+        if (this.isPlaying) {
+            this.music.pause();
+            this.toggleButton.textContent = '🎵 Play Music';
+        } else {
+            this.music.play();
+            this.toggleButton.textContent = '🔇 Mute Music';
+        }
+        this.isPlaying = !this.isPlaying;
+    }
+
+    setVolume(value) {
+        this.music.volume = value;
+    }
+}
+
+window.onload = () => {
+    new Aquarium();
+    new AudioController();
+};
