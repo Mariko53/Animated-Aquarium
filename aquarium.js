@@ -1,3 +1,81 @@
+class Crab {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.size = 20;
+        this.reset();
+        this.y = canvas.height - this.size;
+        this.legPhase = 0;
+        this.bodyBob = 0;
+    }
+
+    reset() {
+        this.x = -this.size * 2;
+        this.direction = 1;
+        if (Math.random() > 0.5) {
+            this.x = this.canvas.width + this.size * 2;
+            this.direction = -1;
+        }
+        this.speed = 0.8 + Math.random() * 0.4;
+    }
+
+    update() {
+        this.x += this.speed * this.direction;
+        this.legPhase += 0.1;
+        this.bodyBob += 0.1;
+        
+        if (this.direction > 0 && this.x > this.canvas.width + this.size * 2) this.reset();
+        if (this.direction < 0 && this.x < -this.size * 2) this.reset();
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y + Math.sin(this.bodyBob) * 2);
+        ctx.scale(this.direction, 1);
+
+        // Body
+        ctx.fillStyle = '#ff6b6b';
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.arc(this.size * 0.3, -this.size * 0.3, this.size * 0.15, 0, Math.PI * 2);
+        ctx.arc(-this.size * 0.3, -this.size * 0.3, this.size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Claws
+        ctx.fillStyle = '#ff6b6b';
+        this.drawClaw(ctx, this.size * 0.9, -this.size * 0.1, this.size * 0.4);
+        this.drawClaw(ctx, -this.size * 0.9, -this.size * 0.1, this.size * 0.4);
+
+        // Legs
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 3; i++) {
+            const legOffset = Math.sin(this.legPhase + i) * 0.2;
+            this.drawLeg(ctx, this.size * 0.3, this.size * 0.1, i * 0.4 - 0.4 + legOffset);
+            this.drawLeg(ctx, -this.size * 0.3, this.size * 0.1, i * 0.4 - 0.4 - legOffset);
+        }
+
+        ctx.restore();
+    }
+
+    drawClaw(ctx, x, y, size) {
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawLeg(ctx, x, y, angle) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(angle) * this.size, y + Math.sin(angle) * this.size);
+        ctx.stroke();
+    }
+}
+
 class Aquarium {
     constructor() {
         this.canvas = document.getElementById('aquarium');
@@ -19,6 +97,7 @@ class Aquarium {
         this.fishes = [];
         this.bubbles = [];
         this.seaweeds = [];
+        this.crabs = [];
         
         // Create fishes
         for (let i = 0; i < 10; i++) {
@@ -28,6 +107,11 @@ class Aquarium {
         // Create seaweed
         for (let i = 0; i < 8; i++) {
             this.seaweeds.push(new Seaweed(this.canvas, i));
+        }
+
+        // Create crabs
+        for (let i = 0; i < 2; i++) {
+            this.crabs.push(new Crab(this.canvas));
         }
     }
 
@@ -59,6 +143,12 @@ class Aquarium {
         this.bubbles.forEach(bubble => {
             bubble.update();
             bubble.draw(this.ctx);
+        });
+
+        // Update and draw crabs
+        this.crabs.forEach(crab => {
+            crab.update();
+            crab.draw(this.ctx);
         });
         
         requestAnimationFrame(() => this.animate());
