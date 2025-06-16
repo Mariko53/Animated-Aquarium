@@ -34,3 +34,13 @@ Note: Due to browser security policies, audio will only play after user interact
    git push
    ```
 4. The site will automatically redeploy with your changes
+
+## Deployment
+
+The site is deployed on Netlify and can be accessed at:
+https://mariko-aquarium-static-wnuq1.netlify.app
+
+To update the site:
+1. Make your changes
+2. Commit and push to GitHub
+3. Netlify will automatically deploy your changes
